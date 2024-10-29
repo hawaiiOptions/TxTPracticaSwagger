@@ -1,0 +1,509 @@
+openapi: 3.0.0
+info:
+  title: User API
+  description: API para gestionar usuarios
+  version: 1.0.0
+paths:
+  /users/{uuid}:
+    get:
+      summary: Obtiene un usuario por UUID
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID del usuario
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  headers:
+                    $ref: '#/components/schemas/Headers'
+                  messageResponse:
+                    $ref: '#/components/schemas/MessageResponse'
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse400'
+                
+                
+        '401':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse401'
+                
+        '403':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse403'
+                
+        '404':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse404'
+                
+        
+        '500':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse500'
+        
+        
+components:
+  schemas:
+  
+    User:
+      type: object
+      required:
+        - id
+        - uuid
+        - firstName
+        - firstLastName
+        - documentType
+        - documentNumber
+        - userType
+        - merchantName
+        - createDt
+        - updateDt
+      properties:
+        uuid:
+          type: string
+          maxLength: 37
+          minLength: 37
+          format: uuid
+          description: UUID único del usuario
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        firstName:
+          type: string
+          maxLength: 45
+          minLength: 1
+          description: Primer nombre del usuario
+          example: "John"
+        secondName:
+          type: string
+          maxLength: 45
+          minLength: 1
+          description: Segundo nombre del usuario
+          example: "Doe"
+        firstLastName:
+          type: string
+          maxLength: 45
+          minLength: 1
+          description: Primer apellido del usuario
+          example: "Firstwo"
+        secondLastName:
+          type: string
+          maxLength: 45
+          minLength: 1
+          description: Segundo apellido del usuario
+          example: "Twofirst"
+        documentType:
+          type: string
+          description: Tipo de documento del usuario
+          enum: [CC, CE, NUIP, PPT, NIT, PEP, PAS, OTR]  
+          example: "CC"
+        documentNumber:
+          type: string
+          minLength: 10
+          maxLength: 18
+          description: Número de documento del usuario
+          example: "1099327871"
+        userType:
+          type: string
+          description: Tipo de usuario
+          enum: [PN, PJ]  
+          example: "PN"
+        merchantName:
+          type: string
+          maxLength: 140
+          minLength: 1
+          description: Nombre del comercio
+          example: "La costa"
+        createDt:
+          type: string
+          format: date-time
+          description: Fecha de creación del usuario en formato ISO-8601
+        updateDt:
+          type: string
+          format: date-time
+          description: Fecha de última actualización del usuario en formato ISO-8601
+  
+  
+    Headers:
+      type: object
+      properties:
+        httpStatusCode:
+          type: string
+          maxLength: 10
+          minLength: 3
+          example: "200"
+        httpStatusDesc:
+          type: string
+          maxLength: 10
+          minLength: 3
+          example: "OK"
+        messageUuid:
+          type: string
+          maxLength: 37
+          minLength: 1
+          format: uuid
+          example: "c4e6bd04-5149-11e7-b114-a2f933d5fe66"
+        requestDatetime:
+          type: string
+          format: date-time
+          example: "2024-10-22T23:54:41.838Z"
+        requestAppId:
+          type: string
+          maxLength: 37
+          minLength: 1
+          format: uuid
+          example: "acxff62e-6f12-42de-9012-1e7304418abd"
+
+    MessageResponse:
+      type: object
+      properties:
+        responseCode:
+          type: string
+          maxLength: 10
+          minLength: 4
+          example: "0000"
+        responseMessage:
+          type: string
+          example: "User Found"
+          maxLength: 50
+          minLength: 10
+        responseDetails:
+          type: string
+          maxLength: 50
+          minLength: 10
+          example: "Retrieving information."
+
+    Errors:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          example: "200"
+          maxLength: 10
+          minLength: 3
+        errorMessage:
+          type: string
+          maxLength: 50
+          minLength: 10
+          example: "Good Request"
+          
+           # Respuesta HTTP 200
+    SuccessResponse200:
+      type: object
+      properties:
+        headers:
+          $ref: '#/components/schemas/Headers'
+        messageResponse:
+          $ref: '#/components/schemas/MessageResponse'
+        data:
+          $ref: '#/components/schemas/User'
+          
+    BadRequestResponse400:
+      type: object
+      properties:
+        headers:
+                type: object
+                properties:
+                  httpStatusCode:
+                    type: string
+                    example: "400"
+                    description: "Código de estado HTTP"
+                  httpStatusDesc:
+                    type: string
+                    example: "Bad Request"
+                    description: "Descripción del estado HTTP"
+                  messageUuid:
+                    type: string
+                    format: uuid
+                    example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    description: "UUID único para el mensaje de solicitud"
+                  requestDatetime:
+                    type: string
+                    format: date-time
+                    example: "2024-10-24T15:35:00Z"
+                    description: "Fecha y hora de la solicitud en formato ISO 8601"
+                  requestAppId:
+                    type: string
+                    format: uuid
+                    example: "d5c4ef85-6783-4320-8e01-4d8ff9dbfa5d"
+                    description: "ID único de la aplicación que realiza la solicitud"
+        messageResponse:
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                    example: "400"
+                    description: "Código de respuesta de la API indicando error en la solicitud"
+                  responseMessage:
+                    type: string
+                    example: "Invalid UUID format"
+                    description: "Mensaje que describe el error"
+                  responseDetails:
+                    type: string
+                    example: "The userId is a UUID."
+                    description: "Detalles adicionales del error en la solicitud"
+        errors:
+                type: object
+                properties:
+                  errorCode:
+                    type: string
+                    example: "400"
+                    description: "Código específico del error"
+                  errorMessage:
+                    type: string
+                    example: "The userId must be a valid UUID."
+                    description: "Mensaje detallado que describe el problema específico con el UUID"
+                    
+    UnauthorizedResponse401:
+                    type: object
+                    properties:
+                      headers:
+                        type: object
+                        properties:
+                          httpStatusCode:
+                            type: string
+                            example: "401"
+                            description: "Código de estado HTTP"
+                          httpStatusDesc:
+                            type: string
+                            example: "Unauthorized"
+                            description: "Descripción del estado HTTP"
+                          messageUuid:
+                            type: string
+                            format: uuid
+                            example: "c4e6bd04-5149-11e7-b114-a2f933d5fe66"
+                            description: "UUID único para el mensaje de solicitud"
+                          requestDatetime:
+                            type: string
+                            format: date-time
+                            example: "2024-10-22T23:54:41.838Z"
+                            description: "Fecha y hora de la solicitud en formato ISO 8601"
+                          requestAppId:
+                            type: string
+                            format: uuid
+                            example: "acxff62e-6f12-42de-9012-1e7304418abd"
+                            description: "ID único de la aplicación que realiza la solicitud"
+                      messageResponse:
+                        type: object
+                        properties:
+                          responseCode:
+                            type: string
+                            example: "401"
+                            description: "Código de respuesta de la API indicando que la solicitud no está autorizada"
+                          responseMessage:
+                            type: string
+                            example: "Unauthorized access"
+                            description: "Mensaje que describe el error"
+                          responseDetails:
+                            type: string
+                            example: "You must authenticate to access this resource"
+                            description: "Detalles adicionales del error en la solicitud"
+                      errors:
+                        type: object
+                        properties:
+                          errorCode:
+                            type: string
+                            example: "401"
+                            description: "Código específico del error"
+                          errorMessage:
+                            type: string
+                            example: "The provided credentials are incorrect or expired."
+                            description: "Mensaje detallado que describe el problema específico con las credenciales"
+                            
+    ForbiddenResponse403:
+            type: object
+            properties:
+              headers:
+                type: object
+                properties:
+                  httpStatusCode:
+                    type: string
+                    example: "403"
+                    description: "Código de estado HTTP"
+                  httpStatusDesc:
+                    type: string
+                    example: "Forbidden"
+                    description: "Descripción del estado HTTP"
+                  messageUuid:
+                    type: string
+                    format: uuid
+                    example: "c4e6bd04-5149-11e7-b114-a2f933d5fe66"
+                    description: "UUID único para el mensaje de solicitud"
+                  requestDatetime:
+                    type: string
+                    format: date-time
+                    example: "2024-10-22T23:54:41.838Z"
+                    description: "Fecha y hora de la solicitud en formato ISO 8601"
+                  requestAppId:
+                    type: string
+                    format: uuid
+                    example: "acxff62e-6f12-42de-9012-1e7304418abd"
+                    description: "ID único de la aplicación que realiza la solicitud"
+              messageResponse:
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                    example: "403"
+                    description: "Código de respuesta de la API indicando que el acceso está prohibido"
+                  responseMessage:
+                    type: string
+                    example: "Access denied"
+                    description: "Mensaje que describe el error"
+                  responseDetails:
+                    type: string
+                    example: "You do not have permission to perform this action"
+                    description: "Detalles adicionales del error en la solicitud"
+              errors:
+                type: object
+                properties:
+                  errorCode:
+                    type: string
+                    example: "403"
+                    description: "Código específico del error"
+                  errorMessage:
+                    type: string
+                    example: "Action Not Allowed"
+                    description: "Mensaje detallado que describe el problema específico con la acción solicitada"
+
+    NotFoundResponse404:
+            type: object
+            properties:
+              headers:
+                type: object
+                properties:
+                  httpStatusCode:
+                    type: string
+                    example: "404"
+                    description: "Código de estado HTTP"
+                  httpStatusDesc:
+                    type: string
+                    example: "Not Found"
+                    description: "Descripción del estado HTTP"
+                  messageUuid:
+                    type: string
+                    format: uuid
+                    example: "c4e6bd04-5149-11e7-b114-a2f933d5fe66"
+                    description: "UUID único para el mensaje de solicitud"
+                  requestDatetime:
+                    type: string
+                    format: date-time
+                    example: "2024-10-22T23:54:41.838Z"
+                    description: "Fecha y hora de la solicitud en formato ISO 8601"
+                  requestAppId:
+                    type: string
+                    format: uuid
+                    example: "acxff62e-6f12-42de-9012-1e7304418abd"
+                    description: "ID único de la aplicación que realiza la solicitud"
+              messageResponse:
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                    example: "404"
+                    description: "Código de respuesta de la API indicando que el recurso no fue encontrado"
+                  responseMessage:
+                    type: string
+                    example: "Invalid UUID"
+                    description: "Mensaje que describe el error"
+                  responseDetails:
+                    type: string
+                    example: "No user exists with the specified identifier"
+                    description: "Detalles adicionales del error en la solicitud"
+              errors:
+                type: object
+                properties:
+                  errorCode:
+                    type: string
+                    example: "404"
+                    description: "Código específico del error"
+                  errorMessage:
+                    type: string
+                    example: "Resource Not Found"
+                    description: "Mensaje detallado que describe el problema específico con el recurso solicitado"
+                    
+                    
+    InternalServerErrorResponse500:
+              type: object
+              properties:
+                headers:
+                  type: object
+                  properties:
+                    httpStatusCode:
+                      type: string
+                      example: "500"
+                      description: "Código de estado HTTP"
+                    httpStatusDesc:
+                      type: string
+                      example: "Internal Server Error"
+                      description: "Descripción del estado HTTP"
+                    messageUuid:
+                      type: string
+                      format: uuid
+                      example: "c4e6bd04-5149-11e7-b114-a2f933d5fe66"
+                      description: "UUID único para el mensaje de solicitud"
+                    requestDatetime:
+                      type: string
+                      format: date-time
+                      example: "2024-10-22T23:54:41.838Z"
+                      description: "Fecha y hora de la solicitud en formato ISO 8601"
+                    requestAppId:
+                      type: string
+                      format: uuid
+                      example: "acxff62e-6f12-42de-9012-1e7304418abd"
+                      description: "ID único de la aplicación que realiza la solicitud"
+                messageResponse:
+                  type: object
+                  properties:
+                    responseCode:
+                      type: string
+                      example: "500"
+                      description: "Código de respuesta de la API indicando un error en el servidor"
+                    responseMessage:
+                      type: string
+                      example: "Server Error"
+                      description: "Mensaje que describe el error"
+                    responseDetails:
+                      type: string
+                      example: "An unexpected error occurred on the server."
+                      description: "Detalles adicionales del error en la solicitud"
+                errors:
+                  type: object
+                  properties:
+                    errorCode:
+                      type: string
+                      example: "500"
+                      description: "Código específico del error"
+                    errorMessage:
+                      type: string
+                      example: "The server could not process the request due to an unexpected error."
+                      description: "Mensaje detallado que describe el problema específico en el servidor"
+
+
+
+          
+          
+   
